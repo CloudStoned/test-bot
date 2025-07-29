@@ -3,6 +3,7 @@ from fastapi.responses import PlainTextResponse
 import os
 from dotenv import load_dotenv
 import requests
+from mangum import Mangum  # <== AWS Lambda adapter
 
 load_dotenv()
 
@@ -43,7 +44,7 @@ async def handle_messages(request: Request):
                     if message_text and message_text.lower() == "hello":
                         send_payload = {
                             "recipient": {"id": sender_id},
-                            "message": {"text": "How may I help youasdsadsadadasdsaasd?"},
+                            "message": {"text": "How may I help you?"}
                         }
                         headers = {
                             "Authorization": f"Bearer {PAGE_ACCESS_TOKEN}",
@@ -57,3 +58,5 @@ async def handle_messages(request: Request):
                             print(f"Error sending message: {e}")
 
     return {"status": "ok"}
+
+handler = Mangum(app)  # <== Required for Vercel deployment
